@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>마음 리부팅 | SHU 학생상담센터</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --pri:#4b56d2; --pri-d:#353fae; --pri-l:#eceefe;
+    --ink:#22263a; --sub:#6c7088; --line:#e4e6f0; --bg:#f4f5fb; --card:#fff;
+    --g:#2fb67c; --y:#f2b233; --o:#f0844a; --r:#e4544b;
+    --body:#4a9be0; --emo:#e7759a; --think:#3fb28f; --sense:#9b7be3; --bal:#4b56d2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:Pretendard,-apple-system,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.55;word-break:keep-all}
+  .wrap{max-width:480px;margin:0 auto;padding:20px 16px 48px}
+  .screen{display:none;animation:fade .35s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .card{background:var(--card);border-radius:20px;padding:24px 20px;box-shadow:0 4px 18px rgba(75,86,210,.08);margin-bottom:16px}
+  .badge{display:inline-block;background:var(--pri-l);color:var(--pri-d);font-size:13px;font-weight:700;padding:5px 12px;border-radius:99px}
+  h1{font-size:27px;line-height:1.35;margin:14px 0 10px;letter-spacing:-.5px}
+  h2{font-size:19px;margin-bottom:6px;letter-spacing:-.3px}
+  .sub{color:var(--sub);font-size:15px}
+  .btn{display:block;width:100%;border:0;border-radius:14px;padding:16px;font-size:17px;font-weight:700;font-family:inherit;cursor:pointer;background:var(--pri);color:#fff;transition:.15s}
+  .btn:active{transform:scale(.98)}
+  .btn:disabled{background:#c9cbe0;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--sub);font-weight:500;font-size:14px;padding:10px}
+  .btn.light{background:var(--pri-l);color:var(--pri-d)}
+  .btn.red{background:var(--r)}
+  .btn.sm{padding:11px 8px;font-size:14px}
+  .footer{text-align:center;color:var(--sub);font-size:12px;margin-top:20px}
+  .err{color:var(--r);font-size:14px;text-align:center;margin:10px 0;min-height:20px}
+
+  /* intro */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:20px 0}
+  .steps div{background:var(--pri-l);border-radius:14px;padding:12px 6px;text-align:center}
+  .steps b{display:block;color:var(--pri-d);font-size:14px;letter-spacing:1px}
+  .steps span{font-size:12px;color:var(--sub)}
+  .msg{border-left:4px solid var(--pri);padding:6px 0 6px 12px;font-weight:600;margin:16px 0 4px}
+
+  /* battery icon */
+  .batt{display:flex;align-items:center;justify-content:center;margin:8px auto}
+  .batt .body{width:150px;height:70px;border:5px solid var(--ink);border-radius:14px;padding:5px;position:relative;background:#fff}
+  .batt .fill{height:100%;border-radius:6px;transition:width 1s ease,background .3s}
+  .batt .cap{width:10px;height:28px;background:var(--ink);border-radius:0 5px 5px 0;margin-left:3px}
+  .batt .pct{position:absolute;inset:0;display:grid;place-items:center;font-size:24px;font-weight:900;color:var(--ink);text-shadow:0 0 6px #fff}
+  .batt.mini .body{width:56px;height:28px;border-width:3px;border-radius:7px;padding:3px}
+  .batt.mini .cap{width:5px;height:12px}
+
+  /* questions */
+  .progress{display:flex;gap:5px;margin-bottom:18px}
+  .progress span{flex:1;height:6px;border-radius:99px;background:var(--line)}
+  .progress span.on{background:var(--pri)}
+  .qlabel{font-weight:800;color:var(--pri);font-size:14px;letter-spacing:.5px}
+  .qtext{font-size:21px;font-weight:800;line-height:1.45;margin:8px 0 20px;letter-spacing:-.4px}
+  .opts{display:flex;flex-direction:column;gap:10px}
+  .opts button{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:14px 16px;font-family:inherit;font-size:16px;font-weight:600;color:var(--ink);cursor:pointer;text-align:left;transition:.15s}
+  .opts button .e{font-size:24px;width:30px;text-align:center}
+  .opts button.sel{border-color:var(--pri);background:var(--pri-l);color:var(--pri-d)}
+  .opts button:active{transform:scale(.98)}
+
+  .chips{display:flex;flex-direction:column;gap:9px;margin:16px 0 20px}
+  .chips button{border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:13px 14px 13px 44px;font-family:inherit;font-size:15px;color:var(--ink);cursor:pointer;text-align:left;position:relative;line-height:1.4}
+  .chips button::before{content:"";position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:6px;border:2px solid #c9cbe0;background:#fff}
+  .chips button.sel{border-color:var(--pri);background:var(--pri-l);font-weight:600}
+  .chips button.sel::before{background:var(--pri);border-color:var(--pri)}
+  .chips button.sel::after{content:"";position:absolute;left:21px;top:50%;width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:translateY(-65%) rotate(45deg)}
+
+  /* info */
+  .dept{display:flex;flex-wrap:wrap;gap:8px}
+  .dept button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:9px 14px;font-family:inherit;font-size:14px;cursor:pointer;color:var(--ink)}
+  .dept button.sel{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700}
+  label.lb{display:block;font-size:15px;font-weight:600;margin:18px 0 8px}
+  input.in{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:14px;font-size:16px;font-family:inherit;outline:none}
+  input.in:focus{border-color:var(--pri)}
+  .note{font-size:13px;color:var(--sub);margin-top:8px}
+
+  /* result */
+  .center{text-align:center}
+  .level{font-size:20px;font-weight:800;margin-top:10px}
+  .level-desc{color:var(--sub);font-size:15px;margin-top:4px}
+  .need{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0 4px}
+  .need span{color:#fff;font-weight:800;padding:8px 16px;border-radius:99px;font-size:16px}
+  .mini-bars{margin-top:8px}
+  .mb{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:14px}
+  .mb .n{width:64px;font-weight:600}
+  .mb .t{flex:1;height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+  .mb .f{height:100%;border-radius:99px}
+  .mb .c{width:34px;text-align:right;color:var(--sub);font-size:13px}
+
+  /* prescription */
+  .rx{border-radius:20px;padding:24px 20px;color:#fff;margin-bottom:14px}
+  .rx .tag{font-size:12px;font-weight:800;letter-spacing:2px;opacity:.85}
+  .rx h2{color:#fff;font-size:22px;margin:6px 0 4px}
+  .rx .lead{font-size:15px;opacity:.95}
+  .rx ul{list-style:none;background:rgba(255,255,255,.17);border-radius:14px;padding:14px 14px;margin-top:14px}
+  .rx li{padding:6px 0 6px 26px;position:relative;font-size:15px}
+  .rx li::before{content:"✓";position:absolute;left:4px;font-weight:900}
+  .rx .one{background:#fff;color:var(--ink);border-radius:14px;padding:12px 14px;margin-top:10px;font-size:14px}
+  .rx .one b{display:block;font-size:13px;color:var(--sub);margin-bottom:2px}
+  .proof{background:#fff;border-radius:16px;padding:16px;font-size:14px}
+  .proof div{display:flex;justify-content:space-between;padding:4px 0}
+  .proof span{color:var(--sub)}
+  .care{background:#fff4ef;border:1.5px solid #f6c7b1;border-radius:16px;padding:16px;font-size:14px;margin-bottom:14px}
+  .care b{color:#c2532a}
+  .center-card{text-align:center}
+  .center-card p{color:var(--sub);font-size:14px;margin-top:4px}
+
+  /* admin */
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+  .stat{background:var(--pri-l);border-radius:12px;padding:12px 6px;text-align:center}
+  .stat b{display:block;font-size:22px;color:var(--pri-d)}
+  .stat span{font-size:12px;color:var(--sub)}
+  .bar{margin:10px 0}
+  .bar .lbl{font-size:13px;margin-bottom:4px;display:flex;justify-content:space-between}
+  .bar .track{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar .fillb{height:100%;background:var(--pri);border-radius:99px}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  th{color:var(--sub);font-weight:600}
+  .tbl-wrap{overflow-x:auto;margin-top:8px}
+  tr.dup td{background:#fff6e5}
+  tr.chk td{background:#fdecec}
+  .row-btns{display:flex;gap:8px;margin:12px 0 4px}
+  td input,th input{width:18px;height:18px;accent-color:var(--r)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 시작 -->
+  <section class="screen active" id="s-intro">
+    <div class="card">
+      <span class="badge">마음건강 체크인</span>
+      <h1>마음 리부팅 🔋<br><span style="font-size:20px;color:var(--sub)">내 마음을 체크하고, 쉼으로 회복하기</span></h1>
+      <div class="batt"><div class="body"><div class="fill" id="introFill" style="width:30%;background:var(--o)"></div></div><div class="cap"></div></div>
+      <p class="msg">열심히 달려온 당신,<br>이제 마음을 재정비할 시간입니다.</p>
+      <p class="sub">시험 기간 동안 쌓인 스트레스와 피로를 돌아보고, 지금 나에게 필요한 쉼을 찾아보세요.</p>
+      <div class="steps">
+        <div><b>CHECK</b><span>마음 상태 확인</span></div>
+        <div><b>REST</b><span>쉼과 회복</span></div>
+        <div><b>REBOOT</b><span>일상 재충전</span></div>
+      </div>
+      <button class="btn" onclick="startCheck()">마음 체크인 시작하기</button>
+      <p class="note" style="text-align:center">⏱️ 약 2분 소요</p>
+    </div>
+    <p class="footer">SHU 학생상담센터 💚 S관 120호</p>
+  </section>
+
+  <!-- 배터리 문항 -->
+  <section class="screen" id="s-q">
+    <div class="card">
+      <div class="progress" id="progress"></div>
+      <div class="qlabel" id="qlabel"></div>
+      <div class="qtext" id="qtext"></div>
+      <div class="opts" id="opts"></div>
+    </div>
+    <button class="btn ghost" id="backBtn" onclick="prevQ()">← 이전</button>
+  </section>
+
+  <!-- 쉼 체크리스트 -->
+  <section class="screen" id="s-list">
+    <div class="card">
+      <div class="progress" id="progress2"></div>
+      <div class="qlabel">CHECK · 마음 배터리 점검</div>
+      <div class="qtext" style="margin-bottom:4px">요즘 나에게 해당하는 것을<br>모두 골라주세요</div>
+      <p class="sub">해당하는 것이 없다면 바로 다음으로 넘어가도 괜찮아요.</p>
+      <div class="chips" id="chips"></div>
+      <button class="btn" onclick="go('s-info')">다음</button>
+    </div>
+    <button class="btn ghost" onclick="backFromList()">← 이전</button>
+  </section>
+
+  <!-- 참여자 정보 -->
+  <section class="screen" id="s-info">
+    <div class="card">
+      <div class="qlabel">마지막 단계</div>
+      <h2 style="margin-top:6px">참여자 정보를 입력하면<br>결과를 확인할 수 있어요</h2>
+      <label class="lb">소속</label>
+      <div class="dept" id="deptBox"></div>
+      <label class="lb" for="sid">학번 / 사번</label>
+      <input class="in" id="sid" inputmode="numeric" placeholder="예) 2026123456" autocomplete="off">
+      <label class="lb" for="sname">이름</label>
+      <input class="in" id="sname" placeholder="이름을 입력하세요" autocomplete="off">
+      <p class="note">🔒 입력하신 정보는 캠페인 참여 확인 및 운영 목적으로만 사용됩니다.</p>
+    </div>
+    <div class="err" id="err"></div>
+    <button class="btn" id="submitBtn" onclick="submitAll()">내 마음 상태 결과 보기</button>
+    <button class="btn ghost" onclick="go('s-list')">← 이전</button>
+  </section>
+
+  <!-- 결과 -->
+  <section class="screen" id="s-result">
+    <div class="card center">
+      <span class="badge">나의 마음 배터리</span>
+      <div class="batt" style="margin-top:16px"><div class="body"><div class="fill" id="rFill"></div><div class="pct" id="rPct"></div></div><div class="cap"></div></div>
+      <div class="level" id="rLevel"></div>
+      <div class="level-desc" id="rDesc"></div>
+    </div>
+    <div class="card">
+      <h2 class="center">지금 나에게 필요한 쉼은?</h2>
+      <div class="need" id="rNeed"></div>
+      <div class="mini-bars" id="rBars"></div>
+    </div>
+    <button class="btn" onclick="showRx()">나의 마음 리부팅 처방 확인하기! 💊</button>
+  </section>
+
+  <!-- 처방 -->
+  <section class="screen" id="s-rx">
+    <div class="card center" style="padding:20px">
+      <span class="badge">REST · 마음 충전소</span>
+      <h2 style="margin-top:10px">나만의 쉼 처방전</h2>
+      <p class="sub">지금 나에게 필요한 회복 방법이에요.</p>
+    </div>
+    <div id="rxList"></div>
+    <div id="careBox"></div>
+    <div class="card">
+      <h2 style="font-size:17px">🎁 쉼 처방 카드 받기</h2>
+      <p class="sub" style="margin-bottom:10px">이 화면을 부스 담당자에게 보여주세요.</p>
+      <div class="proof" id="proof"></div>
+    </div>
+    <div class="card center-card">
+      <b>REBOOT · 일상 재충전</b>
+      <p>마음 배터리가 쉽게 충전되지 않는다면, 혼자 버티지 않아도 괜찮아요.<br>
+      <b style="color:var(--ink)">SHU 학생상담센터 💚 S관 120호</b><br>재학생 누구나 무료로 이용할 수 있어요.</p>
+    </div>
+  </section>
+
+  <!-- 관리자 -->
+  <section class="screen" id="s-admin">
+    <div class="card" id="loginCard">
+      <h2>관리자 로그인 🔐</h2>
+      <p class="sub">Firebase에 등록한 관리자 계정으로 로그인하세요.</p>
+      <label class="lb" for="aEmail">이메일</label>
+      <input class="in" id="aEmail" type="email" autocomplete="username">
+      <label class="lb" for="aPw">비밀번호</label>
+      <input class="in" id="aPw" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')adminLogin()">
+      <div class="err" id="aErr"></div>
+      <button class="btn" onclick="adminLogin()">로그인</button>
+    </div>
+    <div id="dash" style="display:none">
+      <div class="card">
+        <h2>관리자 · 마음 리부팅 참여 현황</h2>
+        <div class="stat-grid">
+          <div class="stat"><b id="aCount">-</b><span>참여자</span></div>
+          <div class="stat"><b id="aAvg">-</b><span>평균 배터리</span></div>
+          <div class="stat"><b id="aLow">-</b><span>방전 위험(&lt;30%)</span></div>
+        </div>
+        <button class="btn" onclick="downloadCSV()">📥 엑셀(CSV) 다운로드</button>
+      </div>
+      <div class="card"><h2>마음 배터리 단계</h2><div id="aLv"></div></div>
+      <div class="card"><h2>필요한 쉼 유형</h2><p class="note">한 사람이 두 가지 이상 해당될 수 있어요.</p><div id="aRest"></div></div>
+      <div class="card"><h2>문항별 평균 (5점)</h2><div id="aB"></div></div>
+      <div class="card"><h2>체크리스트 선택 비율</h2><div id="aItem"></div></div>
+      <div class="card"><h2>소속별 참여</h2><div id="aD"></div></div>
+      <div class="card">
+        <h2>참여자 명단</h2>
+        <p class="note">노란 행 = 같은 학번/사번 중복 제출 · <b>중복 제출만 선택</b>을 누르면 가장 먼저 제출한 1건만 남기고 나머지를 선택해요.</p>
+        <div class="row-btns">
+          <button class="btn sm light" onclick="selectDup()">중복 제출만 선택</button>
+          <button class="btn sm red" onclick="deleteSelected()">🗑️ 선택 삭제 (<span id="selCnt">0</span>)</button>
+        </div>
+        <div class="tbl-wrap"><table id="aTable"></table></div>
+      </div>
+      <button class="btn ghost" onclick="adminLogout()">로그아웃</button>
+    </div>
+  </section>
+
+</div>
+
+<script type="module">
+/* ======================================================
+   🔧 Firebase 설정 (정신건강의 날 OX 퀴즈와 같은 프로젝트 사용,
+      데이터는 별도 컬렉션 mind_reboot_2026 에 저장)
+   ====================================================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyAMEASj9BI7zqLQVJPaCnhAl4GIuu7DZOQ",
+  authDomain: "mh-ox-quiz-2026.firebaseapp.com",
+  projectId: "mh-ox-quiz-2026",
+  storageBucket: "mh-ox-quiz-2026.firebasestorage.app",
+  messagingSenderId: "180923908651",
+  appId: "1:180923908651:web:e52bf0f7660c3de2b2e06e"
+};
+const COLLECTION = "mind_reboot_2026";
+// 관리자 화면: 주소 뒤에 #admin → Firebase Authentication 계정으로 로그인
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, orderBy }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const TEST_MODE = firebaseConfig.apiKey.startsWith("YOUR_");
+let db = null, auth = null;
+if (!TEST_MODE) { const app = initializeApp(firebaseConfig); db = getFirestore(app); auth = getAuth(app); }
+
+/* ---------------- 문항 ---------------- */
+// good: 배터리 계산용(4=가장 양호), lv: 엑셀 표기용 수준(1~5)
+const BQ = [
+  { key:"stress", label:"CHECK 1 · 스트레스", q:"지금 느끼는 스트레스는\n어느 정도인가요?", head:"스트레스(5=매우높음)",
+    o:[["😌","거의 없어요",4,1],["🙂","조금 있어요",3,2],["😐","보통이에요",2,3],["😣","꽤 높아요",1,4],["🤯","매우 높아요",0,5]] },
+  { key:"fatigue", label:"CHECK 2 · 피로", q:"몸과 마음의 피로감은\n어느 정도인가요?", head:"피로(5=매우높음)",
+    o:[["✨","개운해요",4,1],["🙂","조금 피곤해요",3,2],["😐","보통이에요",2,3],["😩","많이 지쳤어요",1,4],["🪫","완전 방전이에요",0,5]] },
+  { key:"mood", label:"CHECK 3 · 기분", q:"요즘 나의 기분은\n어떤가요?", head:"기분(5=매우좋음)",
+    o:[["😄","좋아요",4,5],["🙂","괜찮은 편이에요",3,4],["😐","그저 그래요",2,3],["😔","가라앉아 있어요",1,2],["😢","많이 힘들어요",0,1]] },
+  { key:"energy", label:"CHECK 4 · 에너지", q:"오늘 하루를 보낼 에너지는\n얼마나 남아 있나요?", head:"에너지(5=매우높음)",
+    o:[["⚡","넘쳐요",4,5],["🔋","충분해요",3,4],["😐","보통이에요",2,3],["🫠","부족해요",1,2],["🪫","바닥이에요",0,1]] }
+];
+const REST = {
+  body:  { name:"몸의 쉼", color:"var(--body)", hex:"#4a9be0", icon:"🛌" },
+  emo:   { name:"감정의 쉼", color:"var(--emo)", hex:"#e7759a", icon:"📝" },
+  think: { name:"생각의 쉼", color:"var(--think)", hex:"#3fb28f", icon:"🍃" },
+  sense: { name:"감각의 쉼", color:"var(--sense)", hex:"#9b7be3", icon:"🎧" },
+  bal:   { name:"균형 유지", color:"var(--bal)", hex:"#4b56d2", icon:"✨" }
+};
+// 체크리스트 (화면에는 영역을 섞어서 표시)
+const ITEMS = [
+  ["body","잠이 부족하거나, 자도 개운하지 않아요"],
+  ["emo","작은 일에도 짜증이 나거나 예민해져요"],
+  ["think","걱정이 꼬리에 꼬리를 물어 멈추기 어려워요"],
+  ["sense","하루 종일 휴대폰이나 화면을 보고 있어요"],
+  ["body","목과 어깨가 뻐근하고 몸이 무거워요"],
+  ["emo","시험 결과 때문에 나를 자주 탓하게 돼요"],
+  ["think","머리가 멍하고 집중이 잘 안 돼요"],
+  ["sense","소음이나 주변 자극이 유난히 거슬려요"],
+  ["body","끼니를 거르거나 불규칙하게 먹었어요"],
+  ["emo","이유 없이 울적하거나 마음이 무거워요"],
+  ["think","쉬고 있어도 해야 할 일 생각에 마음이 불편해요"],
+  ["sense","숨을 깊게 쉬어 본 기억이 잘 나지 않아요"]
+];
+const RX = {
+  body: { lead:"몸이 먼저 '쉬고 싶어'라는 신호를 보내고 있어요.",
+    tips:["오늘 밤은 평소보다 30분 일찍 잠자리에 들기","1시간마다 일어나 목·어깨 스트레칭 1분","따뜻한 물 한 잔, 그리고 제때 챙겨 먹는 한 끼"],
+    one:"어깨를 귀까지 끌어올렸다가 '툭' 내려놓기 × 5회" },
+  emo: { lead:"애써 온 내 마음을 알아봐 줄 시간이에요.",
+    tips:["오늘 느낀 감정을 한 단어로 적어보기","친구에게 하듯 나에게 '수고했어' 말해주기","믿을 수 있는 사람에게 마음 털어놓기"],
+    one:"\"결과와 상관없이, 나는 충분히 애썼다\" 소리 내어 읽어보기" },
+  think: { lead:"머릿속에 열린 탭이 너무 많아요. 잠시 닫아볼까요?",
+    tips:["걱정을 종이에 적고 '걱정할 시간'을 따로 정하기","오늘 할 일은 딱 3가지만 고르기","10분 가벼운 산책으로 생각 환기하기"],
+    one:"보이는 것 5개, 들리는 것 4개, 느껴지는 것 3개를 천천히 세어보기" },
+  sense: { lead:"쏟아지는 자극에서 잠시 로그아웃할 시간이에요.",
+    tips:["좋아하는 음악 한 곡, 눈을 감고 온전히 듣기","잠들기 전 30분은 휴대폰 내려놓기","창밖이나 하늘을 1분 동안 바라보기"],
+    one:"4초 동안 들이마시고, 6초 동안 천천히 내쉬기 × 5회" },
+  bal: { lead:"지금 마음 상태가 비교적 균형 잡혀 있어요. 이 리듬을 지켜주세요!",
+    tips:["규칙적인 수면과 식사 리듬 유지하기","하루 10분, 나만을 위한 쉼 시간 정해두기","오늘 고마웠던 일 한 가지 떠올려보기"],
+    one:"나에게 힘이 되는 루틴 하나를 이번 주에 한 번 더 해보기" }
+};
+const DEPTS = ["간호학과","치위생과","뷰티융합과","사회복지과","아동심리상담과","의료AI융합과","글로벌융합과","글로벌요양서비스과","교직원"];
+const TOTAL_STEPS = BQ.length + 1;
+
+/* ---------------- 상태 ---------------- */
+let cur=0, ans=[], picked=new Set(), dept=null, result=null, rows=[], lastInfo=null;
+const $ = id => document.getElementById(id);
+window.go = id => { document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active")); $(id).classList.add("active"); window.scrollTo(0,0); };
+const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const prog = n => Array.from({length:TOTAL_STEPS},(_,i)=>`<span class="${i<=n?'on':''}"></span>`).join("");
+
+function battInfo(p){
+  if(p>=75) return {c:"var(--g)", lv:"충전 완료 🔋", d:"마음 에너지가 잘 채워져 있어요!"};
+  if(p>=50) return {c:"var(--y)", lv:"충전 필요 🔌", d:"조금 지쳐 있어요. 쉼을 챙겨주면 금방 회복돼요."};
+  if(p>=30) return {c:"var(--o)", lv:"저전력 모드 ⚠️", d:"마음 에너지가 많이 줄었어요. 의식적인 쉼이 필요해요."};
+  return {c:"var(--r)", lv:"방전 위험 🪫", d:"지금은 충분히 쉬어야 할 때예요. 혼자 버티지 않아도 괜찮아요."};
+}
+
+/* ---------------- 배터리 문항 ---------------- */
+window.startCheck = () => { cur=0; ans=[]; picked.clear(); renderQ(); go("s-q"); };
+function renderQ(){
+  const q=BQ[cur];
+  $("progress").innerHTML = prog(cur);
+  $("qlabel").textContent = q.label;
+  $("qtext").innerHTML = esc(q.q).replace("\n","<br>");
+  $("opts").innerHTML = q.o.map((o,i)=>`<button data-i="${i}" class="${ans[cur]===i?'sel':''}"><span class="e">${o[0]}</span>${o[1]}</button>`).join("");
+  $("backBtn").style.visibility = "visible";
+}
+$("opts").addEventListener("click", e=>{
+  const b=e.target.closest("button"); if(!b || b.dataset.lock) return;
+  ans[cur]=+b.dataset.i;
+  $("opts").querySelectorAll("button").forEach(x=>{x.classList.toggle("sel",x===b); x.dataset.lock=1;});
+  setTimeout(()=>{ if(cur<BQ.length-1){cur++;renderQ();} else { renderList(); go("s-list"); } }, 260);
+});
+window.prevQ = () => { if(cur>0){cur--;renderQ();} else go("s-intro"); };
+window.backFromList = () => { cur=BQ.length-1; renderQ(); go("s-q"); };
+
+/* ---------------- 체크리스트 ---------------- */
+function renderList(){
+  $("progress2").innerHTML = prog(BQ.length);
+  $("chips").innerHTML = ITEMS.map((it,i)=>`<button data-i="${i}" class="${picked.has(i)?'sel':''}">${it[1]}</button>`).join("");
+}
+$("chips").addEventListener("click", e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  const i=+b.dataset.i; picked.has(i)?picked.delete(i):picked.add(i); b.classList.toggle("sel");
+});
+
+/* ---------------- 정보 입력 ---------------- */
+$("deptBox").innerHTML = DEPTS.map(d=>`<button>${d}</button>`).join("");
+$("deptBox").addEventListener("click", e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  dept=b.textContent; $("deptBox").querySelectorAll("button").forEach(x=>x.classList.toggle("sel",x===b));
+});
+
+function compute(){
+  const good = ans.map((a,i)=>BQ[i].o[a][2]);
+  const battery = Math.round(good.reduce((x,y)=>x+y,0)/(BQ.length*4)*100);
+  const cnt={body:0,emo:0,think:0,sense:0};
+  picked.forEach(i=>cnt[ITEMS[i][0]]++);
+  const mx=Math.max(...Object.values(cnt));
+  const needs = mx===0 ? ["bal"] : Object.keys(cnt).filter(k=>cnt[k]===mx);
+  return { battery, cnt, needs };
+}
+
+window.submitAll = async () => {
+  const sid=$("sid").value.trim(), name=$("sname").value.trim();
+  if(!dept) return $("err").textContent="소속을 선택해 주세요.";
+  if(!sid) return $("err").textContent="학번 또는 사번을 입력해 주세요.";
+  if(!name) return $("err").textContent="이름을 입력해 주세요.";
+  if(ans.length<BQ.length || ans.some(a=>a===undefined)) { $("err").textContent="체크 문항에 모두 응답해 주세요."; return startCheck(); }
+  $("err").textContent=""; const btn=$("submitBtn"); btn.disabled=true; btn.textContent="결과 분석 중...";
+  result = compute();
+  const data = {
+    battery: result.battery,
+    stress: BQ[0].o[ans[0]][3], fatigue: BQ[1].o[ans[1]][3], mood: BQ[2].o[ans[2]][3], energy: BQ[3].o[ans[3]][3],
+    body: result.cnt.body, emo: result.cnt.emo, think: result.cnt.think, sense: result.cnt.sense,
+    needs: result.needs, items: [...picked].sort((a,b)=>a-b),
+    dept, sid, name, clientTime: new Date().toISOString()
+  };
+  try{
+    if(TEST_MODE){
+      const arr=JSON.parse(localStorage.getItem(COLLECTION)||"[]"); arr.push(data); localStorage.setItem(COLLECTION, JSON.stringify(arr));
+    } else {
+      await addDoc(collection(db,COLLECTION), {...data, createdAt: serverTimestamp()});
+    }
+    lastInfo = {name, dept, time:new Date()};
+    showResult();
+  }catch(e){
+    console.error(e); $("err").textContent="제출 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.";
+  }
+  btn.disabled=false; btn.textContent="내 마음 상태 결과 보기";
+};
+
+/* ---------------- 결과 / 처방 ---------------- */
+function showResult(){
+  const {battery,cnt,needs}=result, bi=battInfo(battery);
+  $("rFill").style.width="0%"; $("rFill").style.background=bi.c;
+  $("rPct").textContent=battery+"%";
+  $("rLevel").textContent=bi.lv; $("rLevel").style.color=bi.c;
+  $("rDesc").textContent=bi.d;
+  $("rNeed").innerHTML = needs.map(k=>`<span style="background:${REST[k].color}">${REST[k].icon} ${REST[k].name}</span>`).join("");
+  $("rBars").innerHTML = ["body","emo","think","sense"].map(k=>`<div class="mb"><span class="n">${REST[k].name}</span><div class="t"><div class="f" style="width:${cnt[k]/3*100}%;background:${REST[k].color}"></div></div><span class="c">${cnt[k]}/3</span></div>`).join("");
+  go("s-result");
+  setTimeout(()=>{ $("rFill").style.width=Math.max(battery,4)+"%"; },120);
+}
+window.showRx = () => {
+  const {battery,needs}=result;
+  $("rxList").innerHTML = needs.map(k=>{
+    const r=RX[k], R=REST[k];
+    return `<div class="rx" style="background:linear-gradient(150deg,${R.hex},${R.hex}cc)">
+      <div class="tag">REST PRESCRIPTION</div>
+      <h2>${R.icon} ${R.name}</h2>
+      <div class="lead">${r.lead}</div>
+      <ul>${r.tips.map(t=>`<li>${t}</li>`).join("")}</ul>
+      <div class="one"><b>⏱️ 지금 바로 1분 실천</b>${r.one}</div>
+    </div>`;
+  }).join("");
+  $("careBox").innerHTML = (battery<30 || result.cnt.emo>=3) ? `<div class="care">
+      <b>💌 마음이 많이 지쳐 있는 것 같아요.</b><br>
+      잠깐의 쉼으로 회복되지 않는 날이 계속된다면, 학생상담센터에서 함께 이야기 나눠요.
+      고민이 크지 않아도 괜찮아요. <b>S관 120호</b>, 재학생 누구나 무료예요.</div>` : "";
+  const t=lastInfo.time;
+  $("proof").innerHTML = `
+    <div><span>이름</span><b>${esc(lastInfo.name)}</b></div>
+    <div><span>소속</span><b>${esc(lastInfo.dept)}</b></div>
+    <div><span>마음 배터리</span><b>${battery}%</b></div>
+    <div><span>쉼 처방</span><b>${needs.map(k=>REST[k].name).join(", ")}</b></div>
+    <div><span>참여 시각</span><b>${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,"0")}:${String(t.getMinutes()).padStart(2,"0")}</b></div>`;
+  go("s-rx");
+};
+
+/* ---------------- 관리자 ---------------- */
+let adminStarted=false;
+function openAdmin(){
+  go("s-admin");
+  if(TEST_MODE){ showDash(true); loadAdmin(); return; }
+  if(adminStarted) return; adminStarted=true;
+  onAuthStateChanged(auth, u=>{ showDash(!!u); if(u) loadAdmin(); });
+}
+function showDash(on){ $("loginCard").style.display=on?"none":"block"; $("dash").style.display=on?"block":"none"; }
+window.adminLogin = async () => {
+  $("aErr").textContent="";
+  try{ await signInWithEmailAndPassword(auth, $("aEmail").value.trim(), $("aPw").value); }
+  catch(e){ console.error(e); $("aErr").textContent="이메일 또는 비밀번호가 올바르지 않습니다."; }
+};
+window.adminLogout = async () => { if(auth) await signOut(auth); location.hash=""; go("s-intro"); };
+
+async function loadAdmin(){
+  try{
+    if(TEST_MODE) rows=JSON.parse(localStorage.getItem(COLLECTION)||"[]").map((r,i)=>({...r,_id:i}));
+    else {
+      const snap=await getDocs(query(collection(db,COLLECTION), orderBy("createdAt","asc")));
+      rows=snap.docs.map(d=>({...d.data(), _id:d.id}));
+    }
+    renderAdmin();
+  }catch(e){ console.error(e); alert("데이터를 불러오지 못했어요. Firestore 규칙과 관리자 계정을 확인해 주세요."); }
+}
+const avg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : 0;
+const bar = (l,v,max,txt,color) => `<div class="bar"><div class="lbl"><span>${l}</span><b>${txt}</b></div><div class="track"><div class="fillb" style="width:${max?v/max*100:0}%;${color?`background:${color}`:""}"></div></div></div>`;
+const lvName = p => p>=75?"충전 완료(75% 이상)":p>=50?"충전 필요(50~74%)":p>=30?"저전력 모드(30~49%)":"방전 위험(30% 미만)";
+function renderAdmin(){
+  const n=rows.length;
+  $("aCount").textContent=n;
+  $("aAvg").textContent=avg(rows.map(r=>r.battery)).toFixed(1)+"%";
+  $("aLow").textContent=rows.filter(r=>r.battery<30).length;
+  const lvs=["충전 완료(75% 이상)","충전 필요(50~74%)","저전력 모드(30~49%)","방전 위험(30% 미만)"], lvc=["var(--g)","var(--y)","var(--o)","var(--r)"];
+  $("aLv").innerHTML = lvs.map((l,i)=>{const c=rows.filter(r=>lvName(r.battery)===l).length; return bar(l,c,Math.max(1,n),`${c}명 (${n?(c/n*100).toFixed(1):0}%)`,lvc[i]);}).join("");
+  $("aRest").innerHTML = ["body","emo","think","sense","bal"].map(k=>{const c=rows.filter(r=>(r.needs||[]).includes(k)).length; return bar(`${REST[k].icon} ${REST[k].name}`,c,Math.max(1,n),`${c}명 (${n?(c/n*100).toFixed(1):0}%)`,REST[k].color);}).join("");
+  $("aB").innerHTML = BQ.map(q=>{const v=avg(rows.map(r=>r[q.key])); return bar(q.head,v,5,v.toFixed(2));}).join("");
+  $("aItem").innerHTML = ITEMS.map((it,i)=>({it,i,c:rows.filter(r=>(r.items||[]).includes(i)).length})).sort((a,b)=>b.c-a.c)
+    .map(({it,c})=>bar(`<span class="dot" style="background:${REST[it[0]].color}"></span>${it[1]}`,c,Math.max(1,n),`${n?(c/n*100).toFixed(0):0}%`,REST[it[0]].color)).join("");
+  const dc=DEPTS.map(d=>[d,rows.filter(r=>r.dept===d).length]); const mx=Math.max(1,...dc.map(x=>x[1]));
+  $("aD").innerHTML = dc.map(([d,c])=>bar(d,c,mx,c+"명")).join("");
+  const seen={}; rows.forEach(r=>{const k=String(r.sid).trim(); seen[k]=(seen[k]||0)+1;});
+  $("aTable").innerHTML = `<tr><th><input type="checkbox" id="chkAll"></th><th>#</th><th>시각</th><th>소속</th><th>학번/사번</th><th>이름</th><th>배터리</th><th>필요한 쉼</th></tr>` +
+    rows.map((r,i)=>`<tr class="${seen[String(r.sid).trim()]>1?'dup':''}"><td><input type="checkbox" class="rc" data-i="${i}"></td><td>${i+1}</td><td>${fmt(r)}</td><td>${esc(r.dept)}</td><td>${esc(r.sid)}</td><td>${esc(r.name)}</td><td style="color:${r.battery<30?'var(--r)':'inherit'};font-weight:${r.battery<30?800:400}">${r.battery}%</td><td>${(r.needs||[]).map(k=>REST[k].name).join(", ")}</td></tr>`).join("");
+  $("chkAll").onchange = e => { document.querySelectorAll(".rc").forEach(c=>c.checked=e.target.checked); updSel(); };
+  updSel();
+}
+$("aTable").addEventListener("change", e=>{ if(e.target.classList.contains("rc")) updSel(); });
+function updSel(){
+  const cs=[...document.querySelectorAll(".rc")];
+  cs.forEach(c=>c.closest("tr").classList.toggle("chk",c.checked));
+  $("selCnt").textContent=cs.filter(c=>c.checked).length;
+}
+window.selectDup = () => {
+  const first={};
+  document.querySelectorAll(".rc").forEach(c=>{
+    const k=String(rows[+c.dataset.i].sid).trim();
+    c.checked = k in first; if(!(k in first)) first[k]=true;
+  });
+  updSel();
+  if($("selCnt").textContent==="0") alert("중복 제출된 응답이 없어요.");
+};
+window.deleteSelected = async () => {
+  const idx=[...document.querySelectorAll(".rc:checked")].map(c=>+c.dataset.i);
+  if(!idx.length) return alert("삭제할 응답을 선택해 주세요.");
+  const names=idx.slice(0,5).map(i=>`${rows[i].name}(${rows[i].sid})`).join(", ")+(idx.length>5?` 외 ${idx.length-5}건`:"");
+  if(!confirm(`${idx.length}건을 삭제할까요?\n${names}\n\n삭제하면 되돌릴 수 없어요.`)) return;
+  try{
+    if(TEST_MODE){
+      const arr=JSON.parse(localStorage.getItem(COLLECTION)||"[]").filter((_,i)=>!idx.includes(i));
+      localStorage.setItem(COLLECTION, JSON.stringify(arr));
+    } else {
+      await Promise.all(idx.map(i=>deleteDoc(doc(db,COLLECTION,rows[i]._id))));
+    }
+    await loadAdmin();
+  }catch(e){ console.error(e); alert("삭제 중 오류가 발생했어요. Firestore 규칙을 확인해 주세요."); }
+};
+const fmt = r => { const d = r.createdAt?.toDate ? r.createdAt.toDate() : new Date(r.clientTime);
+  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`; };
+window.downloadCSV = () => {
+  const head=["번호","참여시각","소속","학번/사번","이름","마음배터리(%)","배터리단계",...BQ.map(q=>q.head),"몸(0-3)","감정(0-3)","생각(0-3)","감각(0-3)","필요한 쉼",...ITEMS.map((it,i)=>`체크${i+1}_${it[1]}`)];
+  const body=rows.map((r,i)=>[i+1,fmt(r),r.dept,r.sid,r.name,r.battery,lvName(r.battery),...BQ.map(q=>r[q.key]),r.body,r.emo,r.think,r.sense,(r.needs||[]).map(k=>REST[k].name).join("/"),...ITEMS.map((_,j)=>(r.items||[]).includes(j)?1:0)]);
+  const csv="﻿"+[head,...body].map(a=>a.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+  a.download=`마음리부팅_참여자_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+};
+if(location.hash==="#admin") openAdmin();
+window.addEventListener("hashchange",()=>{ if(location.hash==="#admin") openAdmin(); });
+</script>
+</body>
+</html>
